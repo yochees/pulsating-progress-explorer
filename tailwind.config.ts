@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -84,11 +85,22 @@ export default {
 					to: {
 						height: '0'
 					}
+				},
+				'pulse-gradient': {
+					'0%, 100%': {
+						opacity: '1',
+						transform: 'translateX(0) scale(1.0)'
+					},
+					'50%': {
+						opacity: '0.85',
+						transform: 'translateX(10%) scale(1.05)'
+					}
 				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
-				'accordion-up': 'accordion-up 0.2s ease-out'
+				'accordion-up': 'accordion-up 0.2s ease-out',
+				'pulse-gradient': 'pulse-gradient 3s ease-in-out infinite'
 			}
 		}
 	},
