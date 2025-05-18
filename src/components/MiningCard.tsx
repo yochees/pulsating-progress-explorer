@@ -111,11 +111,19 @@ const MiningCard = () => {
     }, 100); // Update 10 times per second for smooth animation
   };
 
-  const handleSkip = () => {
+  const handleGoToNextStage = () => {
     clearCurrentInterval();
     
-    const currentStageIndex = getCurrentStageIndex(progress);
-    const targetPercentage = stages[Math.min(currentStageIndex + 1, stages.length - 1)].targetPercentage;
+    // Calculate the next target percentage based on current progress
+    let targetPercentage = 33; // Default to first stage target
+    
+    if (progress < stages[0].targetPercentage) {
+      targetPercentage = stages[0].targetPercentage;
+    } else if (progress < stages[1].targetPercentage) {
+      targetPercentage = stages[1].targetPercentage;
+    } else if (progress < stages[2].targetPercentage) {
+      targetPercentage = stages[2].targetPercentage;
+    }
     
     // Animate to target percentage in 1 second
     const start = progress;
@@ -199,11 +207,11 @@ const MiningCard = () => {
           <Button 
             variant="outline" 
             size="sm" 
-            onClick={handleSkip}
+            onClick={handleGoToNextStage}
             className="text-xs"
             disabled={isComplete}
           >
-            Skip
+            Go to next stage
           </Button>
         </div>
       </CardContent>
