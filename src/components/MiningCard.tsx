@@ -27,6 +27,7 @@ const MiningCard = () => {
   const getCurrentStageIndex = (percentage: number): number => {
     if (percentage >= stages[2].targetPercentage) return 2;
     if (percentage >= stages[1].targetPercentage) return 1;
+    if (percentage >= stages[0].targetPercentage) return 1;  // Changed this line to return stage 1 at 33%
     return 0;
   };
 
