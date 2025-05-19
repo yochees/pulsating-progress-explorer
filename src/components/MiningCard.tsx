@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -12,7 +11,7 @@ type Stage = {
 const stages: Stage[] = [
   { subtitle: "Doing something at stage 1", targetPercentage: 33 },
   { subtitle: "Stage 2 now", targetPercentage: 66 },
-  { subtitle: "Processing stage 3", targetPercentage: 100 },
+  { subtitle: "3rd & final stage!!11eleven", targetPercentage: 100 },
 ];
 
 const MiningCard = () => {
