@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -25,8 +26,8 @@ const MiningCard = () => {
 
   const getCurrentStageIndex = (percentage: number): number => {
     if (percentage >= stages[2].targetPercentage) return 2;
-    if (percentage >= stages[1].targetPercentage) return 1;
-    if (percentage >= stages[0].targetPercentage) return 1;  // Changed this line to return stage 1 at 33%
+    if (percentage >= stages[1].targetPercentage) return 2;  // Changed to return stage 2 (index 2) at 66%
+    if (percentage >= stages[0].targetPercentage) return 1;
     return 0;
   };
 
