@@ -23,6 +23,7 @@ const MiningCard = () => {
   const intervalRef = useRef<number | null>(null);
   const lastUpdateTimeRef = useRef<number>(Date.now());
   const startTimeRef = useRef<number>(Date.now());
+  const animationFrameRef = useRef<number | null>(null);
 
   const getCurrentStageIndex = (percentage: number): number => {
     if (percentage >= stages[2].targetPercentage) return 2;
@@ -35,6 +36,10 @@ const MiningCard = () => {
     if (intervalRef.current !== null) {
       window.clearInterval(intervalRef.current);
       intervalRef.current = null;
+    }
+    if (animationFrameRef.current !== null) {
+      cancelAnimationFrame(animationFrameRef.current);
+      animationFrameRef.current = null;
     }
   };
 
@@ -62,6 +67,14 @@ const MiningCard = () => {
     return baseIncrement * speedFactor;
   };
 
+  const easeInOutQuad = (t: number): number => {
+    return t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+  };
+
+  const easeInOutCubic = (t: number): number => {
+    return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+  };
+
   const startProgress = () => {
     setIsComplete(false);
     setIsInitialProgress(true);
@@ -69,18 +82,29 @@ const MiningCard = () => {
     setProgress(0);
     startTimeRef.current = Date.now();
 
-    // First quickly move to 5%
-    const initialInterval = window.setInterval(() => {
-      setProgress(prev => {
-        if (prev >= 5) {
-          clearInterval(initialInterval);
-          setIsInitialProgress(false);
-          startMainProgress();
-          return prev;
-        }
-        return prev + 1.67; // Get to 5% in 3 seconds (1.67% per second)
-      });
-    }, 1000);
+    // Use requestAnimationFrame for smoother animation
+    let startTime = Date.now();
+    const duration = 3000; // 3 seconds for initial animation
+    const animateInitialProgress = () => {
+      const currentTime = Date.now();
+      const elapsed = currentTime - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      
+      // Use easing function for smoother animation
+      const easedProgress = easeInOutCubic(progress);
+      const newValue = easedProgress * 5; // Animate to 5%
+      
+      setProgress(newValue);
+      
+      if (progress < 1) {
+        animationFrameRef.current = requestAnimationFrame(animateInitialProgress);
+      } else {
+        setIsInitialProgress(false);
+        startMainProgress();
+      }
+    };
+    
+    animationFrameRef.current = requestAnimationFrame(animateInitialProgress);
   };
 
   const startMainProgress = () => {
@@ -126,7 +150,7 @@ const MiningCard = () => {
       targetPercentage = stages[2].targetPercentage;
     }
     
-    // Animate to target percentage in 1 second
+    // Animate to target percentage with easing
     const start = progress;
     const range = targetPercentage - start;
     const startTime = Date.now();
@@ -137,9 +161,12 @@ const MiningCard = () => {
       const elapsed = now - startTime;
       
       if (elapsed < duration) {
-        const newProgress = start + (range * elapsed / duration);
+        // Apply easing for smoother animation
+        const progress = elapsed / duration;
+        const easedProgress = easeInOutQuad(progress);
+        const newProgress = start + (range * easedProgress);
         setProgress(newProgress);
-        requestAnimationFrame(animateSkip);
+        animationFrameRef.current = requestAnimationFrame(animateSkip);
       } else {
         setProgress(targetPercentage);
         const newStageIndex = getCurrentStageIndex(targetPercentage);
@@ -155,7 +182,7 @@ const MiningCard = () => {
       }
     };
     
-    requestAnimationFrame(animateSkip);
+    animationFrameRef.current = requestAnimationFrame(animateSkip);
   };
 
   const handleRestart = () => {
